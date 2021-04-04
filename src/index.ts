@@ -11,9 +11,12 @@ function color(str: string): number[] {
   return [0, 0, 0];
 }
 
+export type Uniform = number | Record<string, number> | string;
+
 export class UniformPlugin implements ShaderArtPlugin {
   name = 'UniformPlugin';
   gui: dat.GUI | null = null;
+  params: Record<string, Uniform> = {};
 
   setup(
     hostElement: HTMLElement,
@@ -23,11 +26,13 @@ export class UniformPlugin implements ShaderArtPlugin {
   ): void | Promise<void> {
     const gui = new dat.GUI();
     this.gui = gui;
+    this.params = {};
+    const { params } = this;
     const elements = [...hostElement.querySelectorAll('uniform')];
     for (const el of elements) {
-      const params: Record<string, number | string> = {};
       const name = el.getAttribute('name');
       const type = el.getAttribute('type');
+      const useGui = !el.hasAttribute('no-gui');
       if (!name || !type) {
         continue;
       }
@@ -36,29 +41,101 @@ export class UniformPlugin implements ShaderArtPlugin {
         const min = parseFloat(el.getAttribute('min') || '0.');
         const max = parseFloat(el.getAttribute('max') || '0.');
         const step = parseFloat(el.getAttribute('step') || '0.');
-        const useGui = !el.hasAttribute('no-gui');
+
         params[name] = value;
         const uName = gl.getUniformLocation(program, name);
         gl.uniform1f(uName, value);
-        if (useGui) {
-          gui
-            .add(params, name)
-            .min(min)
-            .max(max)
-            .step(step)
-            .onChange(() => {
-              gl.uniform1f(uName, params[name] as number);
-            });
+        if (!useGui) {
+          continue;
         }
+        gui
+          .add(params, name)
+          .min(min)
+          .max(max)
+          .step(step)
+          .onChange(() => {
+            gl.uniform1f(uName, params[name] as number);
+          });
       }
       if (type === 'color') {
         const value = el.getAttribute('value') || '#000000';
         params[name] = value;
         const uName = gl.getUniformLocation(program, name);
         gl.uniform3fv(uName, color(value));
+        if (!useGui) {
+          continue;
+        }
         gui.addColor(params, name).onChange(() => {
           gl.uniform3fv(uName, color(params[name] as string));
         });
+      }
+      if (type === 'vec2') {
+        const value = (el.getAttribute('value') || '0,0')
+          .split(',')
+          .map((n) => parseFloat(n));
+        params[name] = { x: value[0], y: value[1] };
+        const uName = gl.getUniformLocation(program, name);
+        gl.uniform2fv(uName, value);
+        if (!useGui) {
+          continue;
+        }
+        const changeCallback = () => {
+          const valueObject = params[name] as Record<string, number>;
+          const newValue = [valueObject.x, valueObject.y];
+          gl.uniform2fv(uName, newValue);
+        };
+        const folder = gui.addFolder('name');
+        folder.open();
+        folder.add(params[name], 'x').onChange(changeCallback);
+        folder.add(params[name], 'y').onChange(changeCallback);
+      }
+      if (type === 'vec3') {
+        const value = (el.getAttribute('value') || '0,0,0')
+          .split(',')
+          .map((n) => parseFloat(n));
+        params[name] = { x: value[0], y: value[1], z: value[2] };
+        const uName = gl.getUniformLocation(program, name);
+        gl.uniform3fv(uName, value);
+        if (!useGui) {
+          continue;
+        }
+        const changeCallback = () => {
+          const valueObject = params[name] as Record<string, number>;
+          const newValue = [valueObject.x, valueObject.y, valueObject.z];
+          gl.uniform3fv(uName, newValue);
+        };
+        const folder = gui.addFolder('name');
+        folder.open();
+        folder.add(params[name], 'x').onChange(changeCallback);
+        folder.add(params[name], 'y').onChange(changeCallback);
+        folder.add(params[name], 'z').onChange(changeCallback);
+      }
+      if (type === 'vec4') {
+        const value = (el.getAttribute('value') || '0,0,0,0')
+          .split(',')
+          .map((n) => parseFloat(n));
+        params[name] = { x: value[0], y: value[1], z: value[2], w: value[3] };
+        const uName = gl.getUniformLocation(program, name);
+        gl.uniform3fv(uName, value);
+        if (!useGui) {
+          continue;
+        }
+        const folder = gui.addFolder(name);
+        folder.open();
+        const changeCallback = () => {
+          const valueObject = params[name] as Record<string, number>;
+          const newValue = [
+            valueObject.x,
+            valueObject.y,
+            valueObject.z,
+            valueObject.w,
+          ];
+          gl.uniform4fv(uName, newValue);
+        };
+        folder.add(params[name], 'x').onChange(changeCallback);
+        folder.add(params[name], 'y').onChange(changeCallback);
+        folder.add(params[name], 'z').onChange(changeCallback);
+        folder.add(params[name], 'w').onChange(changeCallback);
       }
     }
   }

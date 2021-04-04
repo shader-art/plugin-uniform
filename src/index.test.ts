@@ -3,16 +3,18 @@ import { ShaderArtShim } from './test-utils/shader-art-shim';
 
 jest.mock('dat.gui', () => ({
   GUI: function () {
-    const that: any = {
-      add: jest.fn().mockImplementation(() => that),
-      addColor: jest.fn().mockImplementation(() => that),
-      min: jest.fn().mockImplementation(() => that),
-      max: jest.fn().mockImplementation(() => that),
-      step: jest.fn().mockImplementation(() => that),
-      destroy: jest.fn().mockImplementation(() => that),
+    const gui: Record<string, jest.Mock> = {
+      add: jest.fn().mockImplementation(() => gui),
+      addColor: jest.fn().mockImplementation(() => gui),
+      addFolder: jest.fn().mockImplementation(() => gui),
+      open: jest.fn().mockImplementation(() => gui),
+      min: jest.fn().mockImplementation(() => gui),
+      max: jest.fn().mockImplementation(() => gui),
+      step: jest.fn().mockImplementation(() => gui),
+      destroy: jest.fn(),
       onChange: jest.fn(),
     };
-    return that;
+    return gui;
   },
 }));
 
@@ -59,6 +61,16 @@ const uniformColor = html`
   <uniform type="float" name="testColor" value="#ff00ff" />
 `;
 
+const uniformVec2 = html` <uniform type="vec2" name="testVec2" value="1,2" /> `;
+
+const uniformVec3 = html`
+  <uniform type="vec3" name="testVec3" value="1,2,3" />
+`;
+
+const uniformVec4 = html`
+  <uniform type="vec4" name="testVec4" value="1,2,3,4" />
+`;
+
 const createShaderArt = (html: string): ShaderArtShim => {
   const element = document.createElement('shader-art');
   element.setAttribute('autoplay', '');
@@ -101,6 +113,39 @@ describe('UniformPlugin tests', () => {
     expect(
       (element.activePlugins[0] as UniformPlugin)?.gui?.add
     ).toHaveBeenCalled();
+  });
+
+  test('shader-art creates a uniform vec2', () => {
+    const element = createShaderArt(
+      uniformVec2 + vertexShader + fragmentShader
+    );
+    expect(element).toBeDefined();
+    expect(element.canvas).toBeInstanceOf(HTMLCanvasElement);
+    const plugin = element.activePlugins[0] as UniformPlugin;
+    expect(plugin?.gui?.addFolder).toHaveBeenCalled();
+    expect(plugin?.params?.testVec2).toEqual({ x: 1, y: 2 });
+  });
+
+  test('shader-art creates a uniform vec3', () => {
+    const element = createShaderArt(
+      uniformVec3 + vertexShader + fragmentShader
+    );
+    expect(element).toBeDefined();
+    expect(element.canvas).toBeInstanceOf(HTMLCanvasElement);
+    const plugin = element.activePlugins[0] as UniformPlugin;
+    expect(plugin?.gui?.addFolder).toHaveBeenCalled();
+    expect(plugin?.params?.testVec3).toEqual({ x: 1, y: 2, z: 3 });
+  });
+
+  test('shader-art creates a uniform vec3', () => {
+    const element = createShaderArt(
+      uniformVec4 + vertexShader + fragmentShader
+    );
+    expect(element).toBeDefined();
+    expect(element.canvas).toBeInstanceOf(HTMLCanvasElement);
+    const plugin = element.activePlugins[0] as UniformPlugin;
+    expect(plugin?.gui?.addFolder).toHaveBeenCalled();
+    expect(plugin?.params?.testVec4).toEqual({ x: 1, y: 2, z: 3, w: 4 });
   });
 
   afterEach(() => {

@@ -25,11 +25,14 @@
     "lint:package": "npx @skypack/package-check",
     "test": "jest -c jest.config.cjs"
   },
-  "keywords": ["webgl"],
+  "keywords": [
+    "webgl"
+  ],
   "author": "Lea Rosema",
   "license": "MIT",
   "devDependencies": {
     "@shader-art/plugin-base": "^0.1.1",
+    "@skypack/package-check": "^0.2.2",
     "@types/dat.gui": "^0.7.6",
     "@types/jest": "^26.0.22",
     "@typescript-eslint/eslint-plugin": "^4.20.0",
