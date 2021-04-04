@@ -1,6 +1,6 @@
 {
   "name": "@shader-art/plugin-uniform",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "uniform variables with dat.gui for shader-art",
   "repository": "shader-art/plugin-uniform",
   "type": "module",
