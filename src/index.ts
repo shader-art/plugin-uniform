@@ -51,7 +51,12 @@ export class UniformPlugin implements ShaderArtPlugin {
           gl.uniform1i(uName, Math.floor(params[name] as number));
         };
         if (!Number.isNaN(min) && !Number.isNaN(max)) {
-          gui.add(params, name).min(min).max(max).step(step);
+          gui
+            .add(params, name)
+            .min(min)
+            .max(max)
+            .step(step)
+            .onChange(changeHandler);
         } else {
           gui.add(params, name).onChange(changeHandler);
         }
@@ -71,7 +76,12 @@ export class UniformPlugin implements ShaderArtPlugin {
           gl.uniform1f(uName, params[name] as number);
         };
         if (!Number.isNaN(min) && !Number.isNaN(max)) {
-          gui.add(params, name).min(min).max(max).step(step);
+          gui
+            .add(params, name)
+            .min(min)
+            .max(max)
+            .step(step)
+            .onChange(changeHandler);
         } else {
           gui.add(params, name).onChange(changeHandler);
         }
