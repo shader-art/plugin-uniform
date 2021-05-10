@@ -12,6 +12,7 @@ You can add uniform variables by using the `<uniform type="vec2|vec3|vec4|color|
 <uniform type="vec4" name="testVec4" value="1,2,3,4" />
 <uniform type="color" name="testColor" value="#ff00ff" />
 <uniform type="float" name="testFloat" value="123." />
+<uniform type="int" name="testInt" value="42" />
 ```
 
 ## Examples

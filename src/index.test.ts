@@ -57,6 +57,8 @@ const uniformFloat = html`
   <uniform type="float" name="testFloat" value="123." />
 `;
 
+const uniformInt = html` <uniform type="int" name="testInt" value="16" /> `;
+
 const uniformColor = html`
   <uniform type="color" name="testColor" value="#ff00ff" />
 `;
@@ -97,6 +99,15 @@ describe('UniformPlugin tests', () => {
     const element = createShaderArt(
       uniformFloat + vertexShader + fragmentShader
     );
+    expect(element).toBeDefined();
+    expect(element.canvas).toBeInstanceOf(HTMLCanvasElement);
+    expect(
+      (element.activePlugins[0] as UniformPlugin)?.gui?.add
+    ).toHaveBeenCalled();
+  });
+
+  test('shader-art creates a uniform int', () => {
+    const element = createShaderArt(uniformInt + vertexShader + fragmentShader);
     expect(element).toBeDefined();
     expect(element.canvas).toBeInstanceOf(HTMLCanvasElement);
     expect(
