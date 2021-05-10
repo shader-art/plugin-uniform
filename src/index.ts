@@ -40,52 +40,41 @@ export class UniformPlugin implements ShaderArtPlugin {
         const value = parseInt(el.getAttribute('value') || '0.', 10);
         const min = parseInt(el.getAttribute('min') || '', 10);
         const max = parseInt(el.getAttribute('max') || '', 10);
-        const step = parseInt(el.getAttribute('step') || '', 10);
-
+        const step = parseInt(el.getAttribute('step') || '1', 10);
         params[name] = value;
         const uName = gl.getUniformLocation(program, name);
         gl.uniform1i(uName, value);
         if (!useGui) {
           continue;
         }
-        const guiItem = gui.add(params, name);
-        if (!Number.isNaN(min)) {
-          guiItem.min(min);
-        }
-        if (!Number.isNaN(max)) {
-          guiItem.max(max);
-        }
-        if (!Number.isNaN(step)) {
-          guiItem.step(step);
-        }
-        guiItem.onChange(() => {
+        const changeHandler = () => {
           gl.uniform1i(uName, Math.floor(params[name] as number));
-        });
+        };
+        if (!Number.isNaN(min) && !Number.isNaN(max)) {
+          gui.add(params, name).min(min).max(max).step(step);
+        } else {
+          gui.add(params, name).onChange(changeHandler);
+        }
       }
       if (type === 'float') {
         const value = parseFloat(el.getAttribute('value') || '0.');
         const min = parseFloat(el.getAttribute('min') || '');
         const max = parseFloat(el.getAttribute('max') || '');
-        const step = parseFloat(el.getAttribute('step') || '');
+        const step = parseFloat(el.getAttribute('step') || '0.01');
         params[name] = value;
         const uName = gl.getUniformLocation(program, name);
         gl.uniform1f(uName, value);
         if (!useGui) {
           continue;
         }
-        const guiItem = gui.add(params, name);
-        if (!Number.isNaN(min)) {
-          guiItem.min(min);
-        }
-        if (!Number.isNaN(max)) {
-          guiItem.max(max);
-        }
-        if (!Number.isNaN(step)) {
-          guiItem.step(step);
-        }
-        guiItem.onChange(() => {
+        const changeHandler = () => {
           gl.uniform1f(uName, params[name] as number);
-        });
+        };
+        if (!Number.isNaN(min) && !Number.isNaN(max)) {
+          gui.add(params, name).min(min).max(max).step(step);
+        } else {
+          gui.add(params, name).onChange(changeHandler);
+        }
       }
       if (type === 'color') {
         const value = el.getAttribute('value') || '#000000';
