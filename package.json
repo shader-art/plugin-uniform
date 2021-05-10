@@ -23,7 +23,8 @@
     "lint": "npm run lint:js -s && npm run lint:package -s",
     "lint:js": "eslint src/**/*.ts",
     "lint:package": "npx @skypack/package-check",
-    "test": "jest -c jest.config.cjs"
+    "test": "jest -c jest.config.cjs",
+    "prepublishOnly": "npm run lint -s && npm test -s && npm run build"
   },
   "keywords": [
     "webgl"
