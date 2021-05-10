@@ -58,7 +58,7 @@ const uniformFloat = html`
 `;
 
 const uniformColor = html`
-  <uniform type="float" name="testColor" value="#ff00ff" />
+  <uniform type="color" name="testColor" value="#ff00ff" />
 `;
 
 const uniformVec2 = html` <uniform type="vec2" name="testVec2" value="1,2" /> `;
@@ -111,7 +111,7 @@ describe('UniformPlugin tests', () => {
     expect(element).toBeDefined();
     expect(element.canvas).toBeInstanceOf(HTMLCanvasElement);
     expect(
-      (element.activePlugins[0] as UniformPlugin)?.gui?.add
+      (element.activePlugins[0] as UniformPlugin)?.gui?.addColor
     ).toHaveBeenCalled();
   });
 
@@ -137,7 +137,7 @@ describe('UniformPlugin tests', () => {
     expect(plugin?.params?.testVec3).toEqual({ x: 1, y: 2, z: 3 });
   });
 
-  test('shader-art creates a uniform vec3', () => {
+  test('shader-art creates a uniform vec4', () => {
     const element = createShaderArt(
       uniformVec4 + vertexShader + fragmentShader
     );

@@ -84,7 +84,7 @@ export class UniformPlugin implements ShaderArtPlugin {
           const newValue = [valueObject.x, valueObject.y];
           gl.uniform2fv(uName, newValue);
         };
-        const folder = gui.addFolder('name');
+        const folder = gui.addFolder(name);
         folder.open();
         folder.add(params[name], 'x').onChange(changeCallback);
         folder.add(params[name], 'y').onChange(changeCallback);
@@ -104,7 +104,7 @@ export class UniformPlugin implements ShaderArtPlugin {
           const newValue = [valueObject.x, valueObject.y, valueObject.z];
           gl.uniform3fv(uName, newValue);
         };
-        const folder = gui.addFolder('name');
+        const folder = gui.addFolder(name);
         folder.open();
         folder.add(params[name], 'x').onChange(changeCallback);
         folder.add(params[name], 'y').onChange(changeCallback);
